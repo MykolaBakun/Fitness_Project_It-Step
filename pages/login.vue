@@ -11,10 +11,10 @@
 					Аuthorization page
 					<b-field label="E-mail" message="">
 
-						<b-input type="text" value="svyat@gmail.com" v-model="email" placeholder="email" maxlength="30" />
+						<b-input type="text" value="bogdan@gmail.com" v-model="email" placeholder="email" maxlength="30" />
 					</b-field>
 					<b-field label="Password " message="">
-						<b-input type="password" value="qwertyuiop" v-model="password" placeholder="password" maxlength="30" />
+						<b-input type="password" value="bogdan1234" v-model="password" placeholder="password" maxlength="30" />
 
 					</b-field>
             		<b-button type="is-link" @click="login()">Log in</b-button>
@@ -36,8 +36,8 @@
 		name: 'Main',
 		data () {
 			return {
-				email: 'svyat@gmail.com',
-				password: 'qwertyuiop',
+				email: 'bogdan@gmail.com',
+				password: 'bogdan1234',
 			}
 		},
 		components: {
