@@ -36,28 +36,50 @@
 <script>
 	import Gym from '~/components/Gym'
 	import Card from '~/components/Card'
+	import firebase from 'firebase/app'
+    import '@firebase/firestore'
 
+    const fireDb = firebase.firestore()
+	var ref;
+	var temp = {
+		login: "firstname",
+		balance: "balance",
+	}
 	export default {
 		name: 'Gyms',
-			data() {
-				return {
-					userInfo: {
-						login: 'EnJay',
-						balance: 100,
-					},
-					API: 'http://api.cubix.world/',
-					payments: null,
-					currentPayMethod: null,
-					phoneVisible: false,
-					phone: '',
-					bonus: 0,
-                	amount: 100,
-				}
-			},
+		data() {
+			return {
+				userInfo: {
+					login: temp.login,
+					balance: temp.balance,
+				},
+				API: 'http://api.cubix.world/',
+				payments: null,
+				currentPayMethod: null,
+				phoneVisible: false,
+				phone: '',
+				bonus: 0,
+            	amount: 100,
+			}
+		},
 
 		components: {
 			Card
 		},
+        beforeCreate(){
+            ref = fireDb.collection('users').doc(this.$store.state.user.user.uid)
+            ref.get().then(function(doc) {
+            if (doc.exists) {
+				temp.login = doc.data().firstname;
+				temp.balance = doc.data().balance;
+				// alert(temp.login)
+            } else {
+                console.log("No such document!");
+            }
+            }).catch(function(error) {
+                console.log("Error getting document:", error);
+            });
+        },
         created() {
             if (!process.browser) {
                 return
