@@ -27,23 +27,24 @@
 
 			<template #end>
 				<b-navbar-item tag="div">
-					<div class="user">
-						<div class="avatar">
-							<img src="/assets/img/user.png" :alt="userInfo.login">
-						</div>
-						<div class="info">
-							<div class="login">
-								{{userInfo.login}}
+					<span v-if="isReady">
+						<div class="user">
+							<div class="avatar">
+								<img src="/assets/img/user.png" :alt="userInfo.login">
 							</div>
-							<div class="balance">
-								<b>Баланс: </b>{{userInfo.balance}}
-								
-            					<nuxt-link to="/cabinet/payment">
-									<b-icon icon="plus-box"></b-icon>
-								</nuxt-link>
-							</div>
+							<div class="info">
+								<div class="login">
+									{{userInfo.login}}
+								</div>
+								<div class="balance">
+									<b>Баланс: </b>{{userInfo.balance}}
+            						<nuxt-link to="/cabinet/payment">
+										<b-icon icon="plus-box"></b-icon>
+									</nuxt-link>
+								</div>
+							</div>		
 						</div>
-					</div>
+					</span>
 				</b-navbar-item>
 			</template>
     	</b-navbar>
@@ -82,6 +83,11 @@
 				<br>
 				<br>
 				<li>
+					<nuxt-link to="/cabinet/payment" exact-active-class="is-active">
+						<b-icon icon="cash-multiple" /> Payments
+					</nuxt-link>
+				</li>
+				<li>
 					<nuxt-link to="/settings" exact-active-class="is-active">
 						<b-icon icon="apps" /> Settings
 					</nuxt-link>
@@ -104,7 +110,15 @@
 <script>
 	import lottie from 'vue-lottie/src/lottie.vue'
 	import * as animationData from "~/assets/animations/42343-jerry-the-speed-walking-turkey.json";
-
+	import firebase from 'firebase/app'
+	import '@firebase/auth'
+	import '@firebase/firestore'
+	var temp = {
+		login: "firstname",
+		balance: "balance",
+		isReady: false
+	}
+	var ref
 	export default {
 		components: {
 			lottie
@@ -112,18 +126,41 @@
 		data () {
 			return {
 				userInfo: {
-					login: 'EnJay',
-					balance: 100,
+
+					login: temp.login,
+					balance: temp.balance,
 				},
+				isReady: '',
 				anim: null,
 				lottieOptions: { animationData: animationData.default }
 			}
+		},
+		created(){
+			const fireDb = firebase.firestore()
+			ref = fireDb.collection('users').doc(this.$store.state.user.user.uid)
 		},
 		methods: {
 			handleAnimation: function (anim) {
 				this.anim = anim;
 			}
-		}
+			
+		},
+		mount(){
+			
+            setTimeout(() => {ref.get().then(function(doc) {
+           		if (doc.exists) {
+					temp.login = doc.data().firstname;
+					temp.balance = doc.data().balance;
+					this.data.isReady = true;
+					// alert(temp.isReady)
+           		} else {
+           		    console.log("No such document!");
+           		}
+            }).catch(function(error) {
+                console.log("Error getting document:", error);
+            });
+					},500)
+		},
 	}
 </script>
 <style>
