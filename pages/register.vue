@@ -72,6 +72,8 @@
 							imgSrc:'https://bulma.io/images/placeholders/1280x960.png',
 							lastname:'',
 							phone:'',
+							balance: '0',
+							isAdmin: false,
 							season_ticket:'',
 							notificationEmailNews: true,
 							notificationEmailTraining: true,

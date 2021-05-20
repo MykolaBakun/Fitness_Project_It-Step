@@ -10,12 +10,10 @@
 					</b-icon>
 					Аuthorization page
 					<b-field label="E-mail" message="">
-
-						<b-input type="text" value="svyat@gmail.com" v-model="email" placeholder="email" maxlength="30" />
+						<b-input type="text" value="mykola@gmail.com" v-model="email" placeholder="email" maxlength="30" />
 					</b-field>
 					<b-field label="Password " message="">
-						<b-input type="password" value="qwertyuiop" v-model="password" placeholder="password" maxlength="30" />
-
+						<b-input type="password" value="qazwsx" v-model="password" placeholder="password" maxlength="30" />
 					</b-field>
             		<b-button type="is-link" @click="login()">Log in</b-button>
 					<nuxt-link to="/register">
@@ -30,16 +28,27 @@
 <script>
 	import firebase from 'firebase/app'
 	import '@firebase/auth'
-
+	const fireDb = firebase.firestore()
+	var ref;
+	let temp = [];
+	let test = 0;
 	export default {
 		layout: 'landing',
 		name: 'Main',
 		data () {
 			return {
-				email: 'svyat@gmail.com',
-				password: 'qwertyuiop',
+				email: 'mykola@gmail.com',
+				password: 'qazwsx',
 			}
 		},
+		  	created(){
+		ref = fireDb.collection('users')
+    ref.get().then(function(querySnapshot) {
+      temp = querySnapshot.docs
+    }).catch(function(error) {
+                console.log("Error getting document:", error);
+    });
+	},
 		components: {
 		},
         computed: {
@@ -49,9 +58,7 @@
         },
 		methods: {
 			login(){
-
 				if(this.email !== '' && this.password !== ''){
-
 					firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         			.then(data => {
 						    this.$notify.success({
@@ -63,7 +70,17 @@
 						    this.$store.commit('auth', {
                   uid: user.uid,
 						    });
-						    this.$router.push('/cabinet')
+							temp.forEach(dosa => {
+        						let appData = dosa.data();
+        						appData.id = dosa.id;
+								if((appData.id == user.uid) && (appData.isAdmin == true)){
+        							test = 1
+								}
+      						});
+							if(test == 1){
+							this.$router.push('/admin/admin')
+							}else{
+						    this.$router.push('/cabinet')}
 					    })
         			.catch(err => {
 						    this.$notify.error({
@@ -71,10 +88,8 @@
 						    	message: 'Login/Password incorrect'
 						    })
 					});
-
-					
-
-				}else{
+				}
+				else{
 					this.$notify.error({
 						title: 'Ooops!',
 						message: 'Fields must not be blank'
