@@ -126,6 +126,7 @@
 		data () {
 			return {
 				userInfo: {
+
 					login: temp.login,
 					balance: temp.balance,
 				},
