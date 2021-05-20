@@ -30,16 +30,27 @@
 <script>
 	import firebase from 'firebase/app'
 	import '@firebase/auth'
-
+	const fireDb = firebase.firestore()
+	var ref;
+	let temp = [];
+	let test = 0;
 	export default {
 		layout: 'landing',
 		name: 'Main',
 		data () {
 			return {
-				email: 'bogdan@gmail.com',
-				password: 'bogdan1234',
+				email: '',
+				password: '',
 			}
 		},
+		  	created(){
+		ref = fireDb.collection('users')
+    ref.get().then(function(querySnapshot) {
+      temp = querySnapshot.docs
+    }).catch(function(error) {
+                console.log("Error getting document:", error);
+    });
+	},
 		components: {
 		},
         computed: {
@@ -49,9 +60,7 @@
         },
 		methods: {
 			login(){
-
 				if(this.email !== '' && this.password !== ''){
-
 					firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         			.then(data => {
 						    this.$notify.success({
@@ -63,7 +72,17 @@
 						    this.$store.commit('auth', {
                   uid: user.uid,
 						    });
-						    this.$router.push('/cabinet')
+							temp.forEach(dosa => {
+        						let appData = dosa.data();
+        						appData.id = dosa.id;
+								if((appData.id == user.uid) && (appData.isAdmin == true)){
+        							test = 1
+								}
+      						});
+							if(test == 1){
+							this.$router.push('/admin/admin')
+							}else{
+						    this.$router.push('/cabinet')}
 					    })
         			.catch(err => {
 						    this.$notify.error({
@@ -71,10 +90,8 @@
 						    	message: 'Login/Password incorrect'
 						    })
 					});
-
-					
-
-				}else{
+				}
+				else{
 					this.$notify.error({
 						title: 'Ooops!',
 						message: 'Fields must not be blank'

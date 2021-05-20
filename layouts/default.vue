@@ -87,11 +87,6 @@
 					</nuxt-link>
 				</li>
 				<li>
-					<nuxt-link to="/cabinet/admin" exact-active-class="is-active">
-						<b-icon icon="account" /> AdminPage
-					</nuxt-link>
-				</li>
-				<li>
 					<nuxt-link to="/">
 						<b-icon icon="exit-to-app" /> Log out
 					</nuxt-link>
